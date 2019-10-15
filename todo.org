@@ -1,0 +1,22 @@
+* TODO
+** DONE Backspacing the previous word entry
+** TODO Manual place cursor
+*** Text area containing spans of each char and input for current
+*** TODO Text area, followed by input, followed by text div
+**** type in input, on space add text to textbox on left and add unremovable letter then fresh input after,
+**** on change, render out representation of new list, ziplist with old list, if they match keep, if not put old list starter in that pos
+**** position at first vacant slot
+**** Limitation : cant make starting letters in previous words non editable, would have to do individual inputs for that
+*** List of inputs
+** TODO COPY button
+** TODO Support \n multiplline : on enter, append \n to end of current string
+** TODO Cannot backspace first letter of generated word
+** TODO Edit previous word and regenerate
+
+* On rerender
+** Stop first letter deletion
+*** when change, check which word in current str is different from old
+*** if its first character that changed, dont allow
+*** if its a different char that changed, then proceed to regenerate
+*** generate layout structure (all the letters in order) from new sentence, then check if each word first char matches the char at its positioin in list,
+*** stop at the first word that doesnt match, and start input from there
