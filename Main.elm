@@ -1,4 +1,4 @@
-module Main exposing (Model(..), Msg(..), after, current, editor, main, previous, update, view)
+module Main exposing (Model(..), Msg(..), after, current, editor, main, previous, re_render, restrict_backspace, validate_prefix,update, view)
 
 -- import Html.Attributes exposing (..)
 
@@ -11,7 +11,8 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html, button, div)
 import List exposing (..)
-import String exposing (endsWith, fromList, toList, trim,words)
+import String exposing (dropLeft, endsWith, fromList, toList, trim, words)
+import Tuple
 
 
 main =
@@ -27,45 +28,176 @@ type Model
     = Model (List String) Int
 
 
+
+-- take the previous state of all words and the current state and prevent the first letter of a word from being deleted
+
+
+restrict_backspace prev_words curr_words =
+    let
+        compare_word p c =
+            case c == p of
+                True ->
+                    p
+
+                False ->
+                    if String.dropLeft 1 p == c then
+                        p
+
+                    else
+                        c
+    in
+    map2 compare_word prev_words curr_words
+
+
+
+-- take the previous state of all words and the current state and re-render so it follows the prefix rules
+-- checks if each word matches its prefix
+-- upon finding the first invalid word, return the accumulated valid words and append the prefixes as the rest of words, also return the position of the new current word to be input
+-- validate_prefix (l::ls) (p::ps) accumulator =
+-- takes the currnt words, the prefix list, and an accumulator
+-- if a word does not start with its paired prefix, return all the words that do match up until the mismatch and a new unused remaining prefix list
+
+
+-- TODO change when u call this to not pass in all words, just up to and including current word
+list_to_prefixes : List String -> List Char
+list_to_prefixes input = input |> String.concat |> String.toList
+
+validate_prefix : List String -> List Char -> List String -> (List String, List String)
+validate_prefix sentence prefixes accumulator =
+    case ( sentence, prefixes ) of
+        ( l :: ls, p :: ps ) ->
+            let
+                _ = Debug.log "CASE :"
+
+                _ = Debug.log "sentence" sentence
+
+                _ = Debug.log "prefixes" prefixes
+
+                _ = Debug.log "current word" l
+
+                _ = Debug.log "current prefix" p
+
+                _ = Debug.log "accumulated" accumulator
+
+                first_char str =
+                    case head (String.toList str) of
+                        Just c ->
+                            c
+
+                        _ ->
+                            '%'
+            in
+            case first_char l == p of
+                True ->
+                    validate_prefix ls ps (accumulator ++ [ l ])
+
+                False -> (accumulator, drop (length accumulator) <| List.map String.fromChar <| list_to_prefixes accumulator)
+
+        ( _, ps ) ->
+            let
+                _ = Debug.log "BASE :"
+
+                _ = Debug.log "accumulated" accumulator
+
+                _ = Debug.log "index" (length accumulator - 1)
+            in (accumulator, drop (length accumulator) <| List.map String.fromChar <| list_to_prefixes accumulator)
+
+-- Takes the state, and the section before the current word which contains chnages, and rerenders a valid new model
+re_render : List String -> List String -> Int -> (List String, Int)
+re_render original_words curr_before_active curr_index =
+    let
+        i =
+            curr_index
+
+        original_before_active =
+            take i original_words
+
+        before_active =
+            restrict_backspace original_before_active curr_before_active
+
+        active_onwards =
+            drop i original_words
+
+        prefix_list =
+            concat <| List.map String.toList before_active
+
+        _ =
+            Debug.log "restricted before active " before_active
+
+        current_and_before =
+            take (i+1) (before_active ++ active_onwards)
+
+        _ =
+            Debug.log "all words" current_and_before
+
+        ( valid_words, remaining_prefixes ) = validate_prefix current_and_before prefix_list []
+        new_words  = valid_words ++ remaining_prefixes
+        new_index = if (length valid_words > i) then i else length valid_words
+
+        _ =
+            Debug.log "new words" new_words
+        _ =
+            Debug.log "new index" new_index
+    in
+    ( new_words, new_index )
+
+
 update msg (Model xs i) =
     case msg of
         TextInput s ->
             let
-                _ =
-                    Debug.log ":" xs
-
                 pre =
                     take i xs
 
-                end =
-                    drop (i + 1) xs
+                old_input =
+                    let
+                        extract_input x =
+                            drop i x |> take 1 |> head
+                    in
+                    case extract_input xs of
+                        Just str ->
+                            str
 
-                cur =
-                    trim s
+                        _ ->
+                            ""
 
-                next =
-                    if i == 0 then
-                        List.map (\x -> fromList [ x ]) <| drop 1 <| toList cur
+
+                new_input =
+                    if String.dropLeft 1 old_input == trim s then
+                        old_input
 
                     else
-                        List.map (\x -> fromList [ x ]) <| toList cur
+                        trim s
+
+
+                prefixes =
+                    (pre ++ [new_input]) |> String.concat |> String.toList
+
+                next = List.map String.fromChar <| drop (i +1) prefixes
+
+                -- next =
+                --     if i == 0 then
+                --         List.map String.fromChar <| drop 1 <| toList new_input
+
+                --     else
+                --        (drop (i +1) xs) ++ (List.map String.fromChar <| toList new_input) 
+
+                _ =
+                    Debug.log "Model :" (pre ++ [ new_input ] ++ next)
             in
             if endsWith " " s then
-                Model (pre ++ [ trim cur ] ++ end ++ next) (i + 1)
+                Model (pre ++ [ new_input ] ++ next) (i + 1)
 
             else
-                Model (pre ++ [ cur ] ++ end) i
+                Model (pre ++ [ new_input ] ++ next ) i
 
         ReRender s ->
-            -- break s into words, and replace that many items in list with them, 
+            -- break s into words, and replace that many items in list with them,
             let
-                current_pre = words s
 
-                end =
-                    drop i xs
-
+                (new_words,new_index) = re_render xs (words s) i
             in
-            Model (current_pre ++ end) i
+            Model new_words new_index
 
 
 previous : Model -> String
@@ -121,7 +253,7 @@ editor model =
         , Input.text
             [ width (shrink |> Element.maximum 150)
             , Input.focusedOnLoad
-            , Border.widthEach { bottom = 0, left = 0, right = 0, top = 0 }
+            , Border.widthEach { bottom = 0, left = 1, right = 0, top = 0 }
             , focused [ Border.shadow { offset = ( 0, 0 ), size = 0, blur = 0, color = rgb 0 0 0 } ]
             ]
             { onChange = TextInput, text = current model, placeholder = Nothing, label = Input.labelHidden "" }

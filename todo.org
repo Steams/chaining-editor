@@ -1,6 +1,6 @@
 * TODO
 ** DONE Backspacing the previous word entry
-** TODO Manual place cursor
+** DONE Manual place cursor
 *** Text area containing spans of each char and input for current
 *** TODO Text area, followed by input, followed by text div
 **** type in input, on space add text to textbox on left and add unremovable letter then fresh input after,
@@ -9,14 +9,40 @@
 **** Limitation : cant make starting letters in previous words non editable, would have to do individual inputs for that
 *** List of inputs
 ** TODO COPY button
-** TODO Support \n multiplline : on enter, append \n to end of current string
-** TODO Cannot backspace first letter of generated word
+** TODO Support \n multiplline : on enter, append \n to end of current string. Ask how he wants enter to be handled
+** DONE Cannot backspace first letter of generated word
 ** TODO Edit previous word and regenerate
+** DONE Stop backspace of first newchar, same logic as on renrender
 
 * On rerender
-** Stop first letter deletion
+** DONE Stop first letter deletion
 *** when change, check which word in current str is different from old
 *** if its first character that changed, dont allow
 *** if its a different char that changed, then proceed to regenerate
 *** generate layout structure (all the letters in order) from new sentence, then check if each word first char matches the char at its positioin in list,
 *** stop at the first word that doesnt match, and start input from there
+** TODO regenerate new prefix list and check each word againsts its prefix
+*** TODO stop on the first fail
+*** TODO use the rest of the prefix list as the words themself for the rest of the model
+
+** TODO BUGSt
+*** if u type the same letter twice u cant backspace the duplicate
+
+
+ the hen enter
+ t  h    e    henadasads
+
+ t h h e n __enter
+ t -> the
+ they match
+ they dont match
+
+ evaluate xs = 
+ let 
+   compare xs ps =
+     if firstof headof xs == headof ps then compare drop1 xs drop1 ps (accumulator ++ head xs)
+     else accumulator ++ mapTostring ps
+ in
+ prefix_list
+
+test cases
