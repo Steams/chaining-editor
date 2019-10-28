@@ -1,4 +1,4 @@
-module Main exposing (Model(..), Msg(..), after, current, editor, main, previous, re_render, restrict_backspace, update, validate_prefix, view)
+module Main exposing (Model(..), Msg(..), after, current, editor, main, previous, re_render, restrict_head_deletion, update, validate_prefix, view)
 
 -- import Html.Attributes exposing (..)
 
@@ -34,7 +34,7 @@ type Model
 -- take the previous state of all words and the current state and prevent the first letter of a word from being deleted
 
 
-restrict_backspace prev_words curr_words =
+restrict_head_deletion prev_words curr_words =
     let
         compare_word p c =
             case c == p of
@@ -42,8 +42,20 @@ restrict_backspace prev_words curr_words =
                     p
 
                 False ->
-                    if String.dropLeft 1 p == c then
-                        p
+                    let
+                        dif = String.length p - String.length c
+                        all_equal str=
+                            case String.toList str of
+                                x::[] -> False
+                                x::xs -> all (\ s -> s == x) <| String.toList str
+                                [] -> False
+
+                    in
+                        if String.dropLeft dif p == c then
+                            if all_equal (String.left (dif + 1) p) then
+                                c
+                            else
+                                p
 
                     else
                         c
@@ -135,7 +147,7 @@ re_render original_words curr_before_active curr_index =
             take i original_words
 
         before_active =
-            restrict_backspace original_before_active curr_before_active
+            restrict_head_deletion original_before_active curr_before_active
 
         active_onwards =
             drop i original_words
@@ -183,6 +195,9 @@ update msg (Model xs i) =
                 pre =
                     take i xs
 
+                _ =
+                    Debug.log "input :" s
+
                 old_input =
                     let
                         extract_input x =
@@ -195,15 +210,10 @@ update msg (Model xs i) =
                         _ ->
                             ""
 
-                new_input =
-                    if String.dropLeft 1 old_input == trim s then
-                        old_input
-
-                    else
-                        trim s
+                new_input = restrict_head_deletion [old_input] [trim s]
 
                 prefixes =
-                    (pre ++ [ new_input ])
+                    (pre ++ new_input )
                         |> String.concat
                         |> String.toList
                         |> List.filter isAlpha
@@ -212,13 +222,13 @@ update msg (Model xs i) =
                     List.map String.fromChar <| drop (i + 1) prefixes
 
                 _ =
-                    Debug.log "Model :" (pre ++ [ new_input ] ++ next)
+                    Debug.log "Model :" (pre ++ new_input++ next)
             in
             if endsWith " " s then
-                Model (pre ++ [ new_input ] ++ next) (i + 1)
+                Model (pre ++ new_input ++ next) (i + 1)
 
             else
-                Model (pre ++ [ new_input ] ++ next) i
+                Model (pre ++ new_input ++ next) i
 
         ReRender s ->
             let
@@ -226,6 +236,31 @@ update msg (Model xs i) =
                     re_render xs (words s) i
             in
             Model new_words new_index
+
+
+
+
+view model =
+    Element.layout [] <| editor model
+
+
+editor model =
+    paragraph [ centerY, centerX, width (fill |> Element.maximum 1000), Font.size 30 ]
+        [ Input.text
+            [ Border.widthEach { bottom = 0, left = 0, right = 0, top = 0 }
+            , focused [ Border.shadow { offset = ( 0, 0 ), size = 0, blur = 0, color = rgb 0 0 0 } ]
+            ]
+            { onChange = ReRender, text = previous model, placeholder = Nothing, label = Input.labelHidden "" }
+        , Input.text
+            [ width (shrink |> Element.maximum 150)
+            , Input.focusedOnLoad
+            , Border.widthEach { bottom = 0, left = 1, right = 0, top = 0 }
+            , focused [ Border.shadow { offset = ( 0, 0 ), size = 0, blur = 0, color = rgb 0 0 0 } ]
+            ]
+            { onChange = TextInput, text = current model, placeholder = Nothing, label = Input.labelHidden "" }
+        , text <| after model
+        -- , html <| textarea [ value "area" ] []
+        ]
 
 
 previous : Model -> String
@@ -265,26 +300,3 @@ current (Model xs i) =
 
         Just s ->
             s
-
-
-view model =
-    Element.layout [] <| editor model
-
-
-editor model =
-    paragraph [ centerY, centerX, width (fill |> Element.maximum 1000), Font.size 30 ]
-        [ Input.text
-            [ Border.widthEach { bottom = 0, left = 0, right = 0, top = 0 }
-            , focused [ Border.shadow { offset = ( 0, 0 ), size = 0, blur = 0, color = rgb 0 0 0 } ]
-            ]
-            { onChange = ReRender, text = previous model, placeholder = Nothing, label = Input.labelHidden "" }
-        , Input.text
-            [ width (shrink |> Element.maximum 150)
-            , Input.focusedOnLoad
-            , Border.widthEach { bottom = 0, left = 1, right = 0, top = 0 }
-            , focused [ Border.shadow { offset = ( 0, 0 ), size = 0, blur = 0, color = rgb 0 0 0 } ]
-            ]
-            { onChange = TextInput, text = current model, placeholder = Nothing, label = Input.labelHidden "" }
-        , text <| after model
-        , html <| textarea [ value "area" ] []
-        ]

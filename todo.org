@@ -1,5 +1,5 @@
-* TODO BUGS
-*** if u type the same letter twice u cant backspace the duplicate
+* BUGS
+*** DONE if u type the same letter twice u cant backspace the duplicate
 
 * TODO
 ** DONE Backspacing the previous word entry
@@ -11,24 +11,28 @@
 **** position at first vacant slot
 **** Limitation : cant make starting letters in previous words non editable, would have to do individual inputs for that
 *** List of inputs
+
 ** DONE Periods don’t need to be part of the chain, so no repeating punctuation (all punctuation)
 *** TODO write tests for punctuations
-** TODO A new line or paragraph should continue the the existing chain
-*** TODO Support \n multiplline : on enter, append \n to end of current string. Ask how he wants enter to be handled
-*** TODO make entire area a text area, make prev a text area, make input input, post is just text
-*** TODO on \n entry, end current word like space, (if empty ignore), add \n to prev text area, continue
-** TODO Button to start new chain and end previous
-*** Insert a button to start a new chain on a new paragraph ??
-
-** TODO COPY button
-
-** TODO Text entry field needs to expand for long new text so it doesnt go under the prefix list
-** TODO Double letter error (I’m able to totally delete the two letters but that would break the chain)
+** DONE Double letter error (I’m able to totally delete the two letters but that would break the chain)
+** DONE handle mouse select and delete multiple aswell. (dont just heck if new string = old string - head, check if newstring = oldstring - (old length - newlength)
 
 ** TODO New text needs to populate somewhere else. It’s going ‘behind’ the entry lines and I can’t read it. New text on top, and entry point at bottom?
 *** TODO Having the entry point shift over as the paragraph progresses, much like the cursor normally would in a regular text editor
 *** TODO Having the entry point not exist inside the paragraph itself, but below the text area
 *** TODO button to switch between these modes
+
+** TODO Button to start new chain and end previous
+*** Insert a button to start a new chain on a new paragraph ??
+
+** TODO A new line or paragraph should continue the the existing chain
+*** TODO Support \n multiplline : on enter, append \n to end of current string. Ask how he wants enter to be handled
+*** TODO make entire area a text area, make prev a text area, make input input, post is just text
+*** TODO on \n entry, end current word like space, (if empty ignore), add \n to prev text area, continue
+
+** TODO COPY button
+** TODO Text entry field needs to expand for long new text so it doesnt go under the prefix list
+
 
 
 ** DONE Cannot backspace first letter of generated word
