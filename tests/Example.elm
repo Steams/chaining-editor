@@ -112,6 +112,7 @@ validate_prefix_tests =
         ]
 
 
+-- test rerender for backspacing first char
 re_render_tests =
     let
         start_string =

@@ -1,3 +1,6 @@
+* TODO BUGS
+*** if u type the same letter twice u cant backspace the duplicate
+
 * TODO
 ** DONE Backspacing the previous word entry
 ** DONE Manual place cursor
@@ -8,10 +11,28 @@
 **** position at first vacant slot
 **** Limitation : cant make starting letters in previous words non editable, would have to do individual inputs for that
 *** List of inputs
+** DONE Periods don’t need to be part of the chain, so no repeating punctuation (all punctuation)
+*** TODO write tests for punctuations
+** TODO A new line or paragraph should continue the the existing chain
+*** TODO Support \n multiplline : on enter, append \n to end of current string. Ask how he wants enter to be handled
+*** TODO make entire area a text area, make prev a text area, make input input, post is just text
+*** TODO on \n entry, end current word like space, (if empty ignore), add \n to prev text area, continue
+** TODO Button to start new chain and end previous
+*** Insert a button to start a new chain on a new paragraph ??
+
 ** TODO COPY button
-** TODO Support \n multiplline : on enter, append \n to end of current string. Ask how he wants enter to be handled
+
+** TODO Text entry field needs to expand for long new text so it doesnt go under the prefix list
+** TODO Double letter error (I’m able to totally delete the two letters but that would break the chain)
+
+** TODO New text needs to populate somewhere else. It’s going ‘behind’ the entry lines and I can’t read it. New text on top, and entry point at bottom?
+*** TODO Having the entry point shift over as the paragraph progresses, much like the cursor normally would in a regular text editor
+*** TODO Having the entry point not exist inside the paragraph itself, but below the text area
+*** TODO button to switch between these modes
+
+
 ** DONE Cannot backspace first letter of generated word
-** TODO Edit previous word and regenerate
+** DONE Edit previous word and regenerate
 ** DONE Stop backspace of first newchar, same logic as on renrender
 
 * On rerender
@@ -21,28 +42,8 @@
 *** if its a different char that changed, then proceed to regenerate
 *** generate layout structure (all the letters in order) from new sentence, then check if each word first char matches the char at its positioin in list,
 *** stop at the first word that doesnt match, and start input from there
-** TODO regenerate new prefix list and check each word againsts its prefix
-*** TODO stop on the first fail
-*** TODO use the rest of the prefix list as the words themself for the rest of the model
-
-** TODO BUGSt
-*** if u type the same letter twice u cant backspace the duplicate
+** DONE regenerate new prefix list and check each word againsts its prefix
+*** DONE stop on the first fail
+*** DONE use the rest of the prefix list as the words themself for the rest of the model
 
 
- the hen enter
- t  h    e    henadasads
-
- t h h e n __enter
- t -> the
- they match
- they dont match
-
- evaluate xs = 
- let 
-   compare xs ps =
-     if firstof headof xs == headof ps then compare drop1 xs drop1 ps (accumulator ++ head xs)
-     else accumulator ++ mapTostring ps
- in
- prefix_list
-
-test cases
