@@ -17,11 +17,12 @@ input id="foo" value="https://github.com/zenorocha/clipboard.js.git">
     <img src="assets/clippy.svg" alt="Copy to clipboard">
 </button>
 * MSG to client
-** remember that if u dont press space before moving to a new chain it wont show. But its still there if you go bacl tp the chain
 ** having the input separate didnt make sense when you switch chains it would have to change what ur input was restricted to
-** Cant handle multiple newlines in a row
-** Still working on newline logic
+** can have input separate if you still want
+** remember that if u dont press space before moving to a new chain it wont show. But its still there if you go bacl tp the chain
 ** If you encounter a series of input where line break doesnt work properly, send screenshot
+*** Still working on newline logic
+** The text you are current typing doesnt count as in the document until you hit space or enter
 
 Not quite yet, i apologize for the delay. Ran into some suprprising diffuculty getting everything to play nicely together. As it turns out, text editors are hard to build, who knew.   
 I have all the features finshed and implemented however, I just have a few cosmetic and conviniece additions to make it easier to work with and more clear about the state at any given point.
@@ -40,8 +41,8 @@ I am adding in CTR
 *** DONE Test copy
 
 ** TODO UI
-*** TODO Text spacing, line height, font size
-*** TODO Nicer text for status bar
+*** DONE Text spacing, line height, font size
+*** DONE Nicer text for status bar
 *** DONE Different color for text being input
 *** DONE Subtle Background color for input slot?
 *** DONE Pick nicer colors for pointer
@@ -50,7 +51,7 @@ I am adding in CTR
 *** Buttons
 **** DONE Copy
 **** DONE New chain
-**** TODO finsh button styles (rounded ?)
+**** DONE finsh button styles (rounded ?)
 **** TODO button that starts new paragraph and a new chain
 *** Status displa
 **** DONE char count

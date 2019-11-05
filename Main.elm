@@ -631,7 +631,7 @@ input_previous flatmap words chain_id position word =
         , focused [ Border.shadow { offset = ( 0, 0 ), size = 0, blur = 0, color = rgb 0 0 0 } ]
         , width <|
             if String.endsWith "\n" word then
-                px <| 1000 - (modBy 37 prev_count * 21) - 10
+                px <| 1000 - (modBy 46 prev_count * 21) - 30
 
             else
                 px (21 * String.length word)
