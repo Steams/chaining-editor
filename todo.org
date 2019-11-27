@@ -24,12 +24,6 @@ input id="foo" value="https://github.com/zenorocha/clipboard.js.git">
 *** Still working on newline logic
 ** The text you are current typing doesnt count as in the document until you hit space or enter
 
-Not quite yet, i apologize for the delay. Ran into some suprprising diffuculty getting everything to play nicely together. As it turns out, text editors are hard to build, who knew.   
-I have all the features finshed and implemented however, I just have a few cosmetic and conviniece additions to make it easier to work with and more clear about the state at any given point.
-I should get a chance to finish it up later today.
-
-I am adding in CTR
-
 * Interface Upgrades
 ** Copy should include \n
 ** TODO Fix newline

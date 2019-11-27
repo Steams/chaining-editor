@@ -35,7 +35,7 @@ init_chains =
 
 
 init_model =
-    { chains = init_chains, active = 0, tooltips = False}
+    { chains = init_chains, active = 0, tooltips = False }
 
 
 init : () -> ( Model, Cmd Msg )
@@ -72,7 +72,7 @@ type alias Chain =
 
 
 type alias Model =
-    { chains : List Chain, active : Int, tooltips: Bool}
+    { chains : List Chain, active : Int, tooltips : Bool }
 
 
 focus_entry =
@@ -288,26 +288,15 @@ update msg model =
             ( new_model, Cmd.none )
 
         Select index ->
-            let
-                _ =
-                    Debug.log "Selct" index
-            in
             ( { model | active = index }, Cmd.none )
 
         AddChain ->
-            let
-                _ =
-                    Debug.log "add chain" model
-            in
             ( { model | chains = model.chains ++ [ empty_chain ], active = List.length model.chains }
             , focus_entry
             )
 
         Delete chain_id ->
             let
-                _ =
-                    Debug.log "add chain" model
-
                 chains =
                     if List.length model.chains == 1 then
                         init_chains
@@ -318,13 +307,6 @@ update msg model =
             ( { model | chains = chains, active = 0 }
             , focus_entry
             )
-
-        Copy ->
-            let
-                _ =
-                    Debug.log "Copy" <| """""" ++ fold_doc model
-            in
-            ( model, Cmd.none )
 
         _ ->
             ( model
@@ -363,6 +345,7 @@ editor model =
             [ width fill
             , height fill
             , paddingXY 200 0
+
             -- , behindContent (copy_target <| fold_doc model)
             ]
           <|
@@ -377,8 +360,9 @@ editor model =
                 , paddingXY 0 120
                 ]
             <|
-                wrappedRow [ Font.size 30, centerX, width (px 1000), Font.color font_dark_grey] rendered_chains
+                wrappedRow [ Font.size 30, centerX, width (px 1000), Font.color font_dark_grey ] rendered_chains
         ]
+
 
 
 -- copy_target val =
@@ -423,7 +407,10 @@ white =
 blue =
     rgb255 5 100 245
 
-font_dark_grey = rgb255 100 100 100
+
+font_dark_grey =
+    rgb255 100 100 100
+
 
 font_grey =
     rgb255 110 110 110
@@ -440,11 +427,18 @@ red =
 input_background =
     rgb255 240 255 240
 
+
 green =
     rgb255 140 225 140
 
-transparent_green = rgba255 140 225 140 0.05
-transparent_grey = rgba255 185 185 185 0.1
+
+transparent_green =
+    rgba255 140 225 140 0.05
+
+
+transparent_grey =
+    rgba255 185 185 185 0.1
+
 
 status_bar model =
     row
@@ -463,9 +457,13 @@ status_bar model =
 
 status_display model =
     let
-        char_count = String.length <| String.filter (\c-> c /= '\n' ) <| fold_doc model
-        chain_count = List.length model.chains
-    in el [ alignLeft, Font.color font_grey ] <| text ("" ++ String.fromInt char_count ++ " characters | " ++ "chains " ++ String.fromInt chain_count )
+        char_count =
+            String.length <| String.filter (\c -> c /= '\n') <| fold_doc model
+
+        chain_count =
+            List.length model.chains
+    in
+    el [ alignLeft, Font.color font_grey ] <| text ("" ++ String.fromInt char_count ++ " characters | " ++ "chains " ++ String.fromInt chain_count)
 
 
 buttons_container copy_text =
@@ -476,6 +474,7 @@ buttons_container copy_text =
         , Border.widthEach { edges | left = 1 }
         , Border.color border_grey
         , spacing 10
+        , paddingXY 20 0
         ]
         [ Input.button
             [ height (px 40)
@@ -525,9 +524,6 @@ show_chains active chains =
                         )
                     )
                     ( [], [] )
-
-        _ =
-            Debug.log "Flat map" document_flatmap
     in
     concat <| List.indexedMap (show_chain active document_flatmap) chains
 
@@ -601,29 +597,6 @@ input_previous flatmap words chain_id position word =
 
             else
                 Input.labelHidden ""
-
-        -- _ =
-        --     if chain_id == 1 && position == 1 then
-        --         Debug.log "position" position
-        --     else
-        --         -1
-        -- _ =
-        --     if chain_id == 1 && position == 1 then
-        --         Debug.log "words" words
-        --     else
-        --         []
-        -- _ =
-        --     if chain_id == 1 && position == 1 then
-        --         Debug.log "prev" prev_words
-        --     else
-        --         ""
-        -- _ =
-        --     if chain_id == 1 && position == 1 then
-        --         Debug.log "count" prev_count
-        --     else
-        --         -1
-        -- prev_count =
-        --     Maybe.withDefault (String.length prev_chars) <| head <| String.indexes "\n" <| String.reverse <| String.concat <| take position words
     in
     Input.text
         [ Border.width 0
@@ -668,16 +641,15 @@ input_current active chain_id word =
             else
                 21
 
-        (pointer_color,highlight)=
+        ( pointer_color, highlight ) =
             if active then
-                (green,transparent_green)
+                ( green, transparent_green )
 
             else
-                (font_faded,transparent_grey)
+                ( font_faded, transparent_grey )
 
         label =
             Input.labelAbove [ pointer, width fill, height fill ] <| el [ alignLeft, centerY, width (px 10), height (px 10), Border.rounded 10, Background.color pointer_color ] <| text ""
-
     in
     Input.text
         [ Border.width 0
